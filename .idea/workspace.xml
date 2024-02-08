@@ -4,16 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e7db618-6e1a-4dc6-93db-c9ec36cec25b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/Digital Diary.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/create_acc.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/log_in.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+    <list default="true" id="9e7db618-6e1a-4dc6-93db-c9ec36cec25b" name="Changes" comment="Create README">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,6 +15,9 @@
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectColorInfo"><![CDATA[{
   "associatedIndex": 6
@@ -67,12 +63,43 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1707282291607</updated>
-      <workItem from="1707282298036" duration="7378000" />
+      <workItem from="1707282298036" duration="8733000" />
     </task>
+    <task id="LOCAL-00001" summary="Add log in page">
+      <option name="closed" value="true" />
+      <created>1707366099041</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1707366099041</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Create UI for log in and create account dialogs">
+      <option name="closed" value="true" />
+      <created>1707366126137</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1707366126137</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Create README">
+      <option name="closed" value="true" />
+      <created>1707366727722</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1707366727722</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Add log in page" />
+    <MESSAGE value="Create UI for log in and create account dialogs" />
+    <MESSAGE value="Create README" />
+    <option name="LAST_COMMIT_MESSAGE" value="Create README" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Digital_Diary$main.coverage" NAME="main Coverage Results" MODIFIED="1707365088406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

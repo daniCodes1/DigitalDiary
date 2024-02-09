@@ -70,7 +70,13 @@ class CreateAcc(QDialog):
         if self.password.text() == self.password_confirm.text():
             password = self.password.text()
             print("Successfully created account with email: ", email, " and password: ", password)
+            confirmation = QMessageBox()
+            confirmation.setText(f'Successfully created account for account {email}. Will redirect to log in.')
+            confirmation.exec_()
             self.close()
+            login = Login()
+            widget.addWidget(login)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             print("Passwords do not match. Please try again.")
 

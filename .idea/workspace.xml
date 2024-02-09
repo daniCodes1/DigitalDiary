@@ -4,8 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="9e7db618-6e1a-4dc6-93db-c9ec36cec25b" name="Changes" comment="Create README">
+    <list default="true" id="9e7db618-6e1a-4dc6-93db-c9ec36cec25b" name="Changes" comment="Add UI for diary home page">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary.ui" beforeDir="false" afterPath="$PROJECT_DIR$/diary.ui" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -63,7 +64,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1707282291607</updated>
-      <workItem from="1707282298036" duration="8733000" />
+      <workItem from="1707282298036" duration="12172000" />
     </task>
     <task id="LOCAL-00001" summary="Add log in page">
       <option name="closed" value="true" />
@@ -89,7 +90,31 @@
       <option name="project" value="LOCAL" />
       <updated>1707366727722</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Add Create Account page">
+      <option name="closed" value="true" />
+      <created>1707367466737</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1707367466737</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Add Create Account page">
+      <option name="closed" value="true" />
+      <created>1707367473004</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1707367473004</updated>
+    </task>
+    <task id="LOCAL-00006" summary="Add UI for diary home page">
+      <option name="closed" value="true" />
+      <created>1707446512250</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1707446512250</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -99,9 +124,11 @@
     <MESSAGE value="Add log in page" />
     <MESSAGE value="Create UI for log in and create account dialogs" />
     <MESSAGE value="Create README" />
-    <option name="LAST_COMMIT_MESSAGE" value="Create README" />
+    <MESSAGE value="Add Create Account page" />
+    <MESSAGE value="Add UI for diary home page" />
+    <option name="LAST_COMMIT_MESSAGE" value="Add UI for diary home page" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Digital_Diary$main.coverage" NAME="main Coverage Results" MODIFIED="1707365088406" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Digital_Diary$main.coverage" NAME="main Coverage Results" MODIFIED="1707447435700" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

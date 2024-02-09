@@ -20,17 +20,36 @@ class Login(QDialog):
         password = self.password.text()
         print("Successfully logged in with email: ", email, " and password: ", password)
         self.close()
+        self.open_diary()
 
     def do_signup(self):
         create_acc = CreateAcc()
         widget.addWidget(create_acc)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
+    def open_diary(self):
+        diary = Diary()
+        widget.addWidget(diary)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+class Diary(QDialog):
+
+    def __init__(self):
+        super(Diary, self).__init__(None)
+        uic.loadUi("diary.ui", self)
+        self.submit_date_button.clicked.connect(self.open_new_entry)
+        self.save_button.clicked.connect(self.save_entry)
+
+    def open_new_entry(self):
+        self.entry_box.setStyleSheet("background-color: rgb(241, 251, 250)")
+        self.entry_box.setEnabled(True)
+
 
 class CreateAcc(QDialog):
 
     def __init__(self):
-        super(CreateAcc, self).__init__()
+        super(CreateAcc, self).__init__(None)
         uic.loadUi("create_acc.ui", self)
         self.signup_button.clicked.connect(self.create_acc_func)
         self.password.setEchoMode(QLineEdit.Password)

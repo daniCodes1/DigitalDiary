@@ -2,9 +2,17 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
+import secrets
+import string
+import hashlib
+from getpass import getpass
 
 
 # USING QT DESIGNER
+
+
+ACCOUNT_DETAILS_FILEPATH = "users.txt"
+
 
 class Login(QDialog):
 
@@ -18,9 +26,12 @@ class Login(QDialog):
     def do_login(self):
         email = self.email.text()
         password = self.password.text()
-        print("Successfully logged in with email: ", email, " and password: ", password)
-        self.close()
-        self.open_diary()
+        if not authenticate_user(email, password):
+            print("Invalid username or password")
+        else:
+            print("Successfully logged in with email: ", email, " and password: ", password)
+            self.close()
+            self.open_diary()
 
     def do_signup(self):
         create_acc = CreateAcc()
@@ -31,6 +42,19 @@ class Login(QDialog):
         diary = Diary()
         widget.addWidget(diary)
         widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+def authenticate_user(username, password):
+    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
+        for line in f:
+            parts = line.split()
+            if parts[0] == username:
+                hashed_password = parts[1]
+                if hashed_password == hash_password(password):
+                    return True
+                else:
+                    return False
+    return False
 
 
 class Diary(QDialog):
@@ -51,9 +75,8 @@ class Diary(QDialog):
             self.entry_box.setEnabled(True)
 
     def save_entry(self):
-        confirmation = QMessageBox()
-        confirmation.setText(f'Your entry for {self.date.toPlainText()} has been saved')
-        confirmation.exec_()
+        make_message_box(f'Your entry for {self.date.toPlainText()} has been saved')
+        # Will save the data
 
 
 class CreateAcc(QDialog):
@@ -69,10 +92,7 @@ class CreateAcc(QDialog):
         email = self.email.text()
         if self.password.text() == self.password_confirm.text():
             password = self.password.text()
-            print("Successfully created account with email: ", email, " and password: ", password)
-            confirmation = QMessageBox()
-            confirmation.setText(f'Successfully created account for account {email}. Will redirect to log in.')
-            confirmation.exec_()
+            # print("Successfully created account with email: ", email, " and password: ", password)
             self.close()
             login = Login()
             widget.addWidget(login)

@@ -50,6 +50,11 @@ class Diary(QDialog):
             self.entry_box.setStyleSheet("background-color: rgb(241, 251, 250)")
             self.entry_box.setEnabled(True)
 
+    def save_entry(self):
+        confirmation = QMessageBox()
+        confirmation.setText(f'Your entry for {self.date.toPlainText()} has been saved')
+        confirmation.exec_()
+
 
 class CreateAcc(QDialog):
 

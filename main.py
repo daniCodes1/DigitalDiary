@@ -12,6 +12,7 @@ from getpass import getpass
 
 
 ACCOUNT_DETAILS_FILEPATH = "users.txt"
+PASSWORD_LENGTH = 8
 
 
 class Login(QDialog):
@@ -27,7 +28,7 @@ class Login(QDialog):
         email = self.email.text()
         password = self.password.text()
         if not authenticate_user(email, password):
-            print("Invalid username or password")
+            print("Invalid username or password") # let them try again
         else:
             print("Successfully logged in with email: ", email, " and password: ", password)
             self.close()
@@ -93,12 +94,34 @@ class CreateAcc(QDialog):
         if self.password.text() == self.password_confirm.text():
             password = self.password.text()
             # print("Successfully created account with email: ", email, " and password: ", password)
+            hashed_password = hash_password(password)
+            save_user(self.email, hashed_password)
+            make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
             self.close()
             login = Login()
             widget.addWidget(login)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
             print("Passwords do not match. Please try again.")
+
+
+def hash_password(pwd):
+    # hash a password using SHA-256 algorithm
+    pwd_bytes = pwd.encode('utf-8')
+    hashed_pwd = hashlib.sha256(pwd_bytes).hexdigest()
+    return hashed_pwd
+
+
+def save_user(email, hashed_pwd):
+    # save to file
+    with open(ACCOUNT_DETAILS_FILEPATH, "a") as f:
+        f.write(f"{email} {hashed_pwd}\n")
+
+
+def make_message_box(message):
+    popup = QMessageBox()
+    popup.setText(message)
+    popup.exec_()
 
 
 app = QApplication(sys.argv)

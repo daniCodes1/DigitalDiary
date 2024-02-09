@@ -42,8 +42,13 @@ class Diary(QDialog):
         self.save_button.clicked.connect(self.save_entry)
 
     def open_new_entry(self):
-        self.entry_box.setStyleSheet("background-color: rgb(241, 251, 250)")
-        self.entry_box.setEnabled(True)
+        if self.date.toPlainText() == "":
+            warning = QMessageBox()
+            warning.setText("Please fill in the date.")
+            warning.exec_()
+        else:
+            self.entry_box.setStyleSheet("background-color: rgb(241, 251, 250)")
+            self.entry_box.setEnabled(True)
 
 
 class CreateAcc(QDialog):

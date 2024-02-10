@@ -22,40 +22,18 @@ class Login(QDialog):
         uic.loadUi("log_in.ui", self)
         self.login_button.clicked.connect(self.do_login)
         self.password.setEchoMode(QLineEdit.Password)
-        self.create_acc_button.clicked.connect(self.do_signup)
+        self.create_acc_button.clicked.connect(do_signup)
 
     def do_login(self):
         email = self.email.text()
         password = self.password.text()
-        if not authenticate_user(email, password):
-            print("Invalid username or password") # let them try again
-        else:
-            print("Successfully logged in with email: ", email, " and password: ", password)
+        if authenticate_user(email, password):
+            make_message_box(f"Successfully logged in with email: {email}")
             self.close()
-            self.open_diary()
+            open_diary()
+        else:
+            make_message_box("Invalid username or password")  # let them try again
 
-    def do_signup(self):
-        create_acc = CreateAcc()
-        widget.addWidget(create_acc)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-
-    def open_diary(self):
-        diary = Diary()
-        widget.addWidget(diary)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
-
-
-def authenticate_user(username, password):
-    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
-        for line in f:
-            parts = line.split()
-            if parts[0] == username:
-                hashed_password = parts[1]
-                if hashed_password == hash_password(password):
-                    return True
-                else:
-                    return False
-    return False
 
 
 class Diary(QDialog):
@@ -95,14 +73,28 @@ class CreateAcc(QDialog):
             password = self.password.text()
             # print("Successfully created account with email: ", email, " and password: ", password)
             hashed_password = hash_password(password)
-            save_user(self.email, hashed_password)
+            save_user(email, hashed_password)
+            print("user", self.email.text())
+            print(hashed_password)
             make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
             self.close()
             login = Login()
             widget.addWidget(login)
             widget.setCurrentIndex(widget.currentIndex() + 1)
         else:
-            print("Passwords do not match. Please try again.")
+            make_message_box("Passwords do not match. Please try again.")
+
+
+def do_signup():
+    create_acc = CreateAcc()
+    widget.addWidget(create_acc)
+    widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+def open_diary():
+        diary = Diary()
+        widget.addWidget(diary)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def hash_password(pwd):
@@ -116,6 +108,20 @@ def save_user(email, hashed_pwd):
     # save to file
     with open(ACCOUNT_DETAILS_FILEPATH, "a") as f:
         f.write(f"{email} {hashed_pwd}\n")
+
+
+def authenticate_user(username, password):
+    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
+        for line in f:
+            parts = line.split()
+            print("part", parts)
+            if parts[0] == username:
+                hashed_password = parts[1]
+                if hashed_password == hash_password(password):
+                    return True
+                else:
+                    return False
+    return False
 
 
 def make_message_box(message):

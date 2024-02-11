@@ -76,20 +76,25 @@ class CreateAcc(QDialog):
         self.password.setEchoMode(QLineEdit.Password)
         self.password_confirm.setEchoMode(QLineEdit.Password)
 
+
+
     def create_acc_func(self):
         email = self.email.text()
-        if self.password.text() == self.password_confirm.text():
-            password = self.password.text()
-            # print("Successfully created account with email: ", email, " and password: ", password)
-            hashed_password = hash_password(password)
-            save_user(email, hashed_password)
-            make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
-            self.close()
-            login = Login()
-            widget.addWidget(login)
-            widget.setCurrentIndex(widget.currentIndex() + 1)
+        if existing_user(email):
+            make_message_box("Username taken.")
         else:
-            make_message_box("Passwords do not match. Please try again.")
+            if self.password.text() == self.password_confirm.text():
+                password = self.password.text()
+                # print("Successfully created account with email: ", email, " and password: ", password)
+                hashed_password = hash_password(password)
+                save_user(email, hashed_password)
+                make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
+                self.close()
+                login = Login()
+                widget.addWidget(login)
+                widget.setCurrentIndex(widget.currentIndex() + 1)
+            else:
+                make_message_box("Passwords do not match. Please try again.")
 
 
 def do_signup():
@@ -114,10 +119,10 @@ def save_user(email, hashed_pwd):
 def authenticate_user(username, password):
     with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
         for line in f:
-            parts = line.split()
-            print("part", parts)
-            if parts[0] == username:
-                hashed_password = parts[1]
+            components = line.split()
+            print("part", components)
+            if components[0] == username:
+                hashed_password = components[1]
                 if hashed_password == hash_password(password):
                     return True
                 else:
@@ -129,6 +134,14 @@ def make_message_box(message):
     popup = QMessageBox()
     popup.setText(message)
     popup.exec_()
+
+def existing_user(email):
+    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
+        for line in f:
+            components = line.split()
+            if components[0] == email:
+                return True
+    return False
 
 
 app = QApplication(sys.argv)

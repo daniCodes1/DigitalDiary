@@ -11,14 +11,14 @@ import os
 
 
 ACCOUNT_DETAILS_FILEPATH = "users.txt"
-ENTRY_FILEPATH = "entries.txt"
+ENTRY_FILEPATH = "entries.json"
 
 
 class Login(QDialog):
 
     def __init__(self):
         super(Login, self).__init__(None)
-        uic.loadUi("log_in.ui", self)
+        uic.loadUi("ui/log_in.ui", self)
         self.login_button.clicked.connect(self.do_login)
         self.password.setEchoMode(QLineEdit.Password)
         self.create_acc_button.clicked.connect(do_signup)
@@ -26,7 +26,9 @@ class Login(QDialog):
     def do_login(self):
         email = self.email.text()
         password = self.password.text()
-        if authenticate_user(email, password):
+        if not os.path.exists(ACCOUNT_DETAILS_FILEPATH):
+            make_message_box("User does not exist")
+        elif authenticate_user(email, password):
             make_message_box(f"Successfully logged in with email: {email}")
             self.close()
             open_diary(email)
@@ -44,7 +46,7 @@ class Diary(QDialog):
 
     def __init__(self, email):
         super(Diary, self).__init__(None)
-        uic.loadUi("diary.ui", self)
+        uic.loadUi("ui/diary.ui", self)
         self.submit_date_button.clicked.connect(self.open_new_entry)
         self.save_button.clicked.connect(self.save_entry)
         self.view_button.clicked.connect(self.show_entries)
@@ -65,27 +67,27 @@ class Diary(QDialog):
         full_entry = self.date.toPlainText() + "\n" + self.entry_box.toPlainText() + "\n"
         #     f.write(f"{self.email} {full_entry}")
         # open_diary(self.email)
-        if os.path.exists("data.json"):
+        if os.path.exists(ENTRY_FILEPATH):
             #  opening JSON file
-            f = open('data.json')
+            f = open(ENTRY_FILEPATH)
             loaded_entries = json.load(f)
 
             if self.email in loaded_entries:
                 loaded_entries[self.email] += "\n" + full_entry
             else:
                 loaded_entries[self.email] = full_entry
-            with open('data.json', 'w', encoding='utf-8') as f:
+            with open(ENTRY_FILEPATH, 'w', encoding='utf-8') as f:
                 json.dump(loaded_entries, f, ensure_ascii=False, indent=4)
         else:
             info = {
                 self.email: full_entry
             }
-            with open('data.json', 'w', encoding='utf-8') as f:
+            with open(ENTRY_FILEPATH, 'w', encoding='utf-8') as f:
                 json.dump(info, f, ensure_ascii=False, indent=4)
         open_diary(self.email)
 
     def show_entries(self):
-        if not os.path.exists("data.json"):
+        if not os.path.exists(ENTRY_FILEPATH):
             make_message_box("No entries exist.")
         else:
             entries = ShowEntries(self.email)
@@ -100,11 +102,12 @@ class ShowEntries(QDialog):
 
         self.email = email
 
-        uic.loadUi("past_entries.ui", self)
-        f = open('data.json')
+        uic.loadUi("ui/past_entries.ui", self)
+        f = open(ENTRY_FILEPATH)
         # returns JSON object as a dictionary
         data = json.load(f)
         self.past_entries.append(data[self.email])
+        self.past_entries.setReadOnly(True)
         # Closing file
         f.close()
 
@@ -113,7 +116,7 @@ class CreateAcc(QDialog):
 
     def __init__(self):
         super(CreateAcc, self).__init__(None)
-        uic.loadUi("create_acc.ui", self)
+        uic.loadUi("ui/create_acc.ui", self)
         self.signup_button.clicked.connect(self.create_acc_func)
         self.password.setEchoMode(QLineEdit.Password)
         self.password_confirm.setEchoMode(QLineEdit.Password)
@@ -157,6 +160,7 @@ def save_user(email, hashed_pwd):
 
 
 def authenticate_user(username, password):
+
     with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
         for line in f:
             components = line.split()
@@ -177,6 +181,7 @@ def make_message_box(message):
 
 
 def existing_user(email):
+
     with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
         for line in f:
             components = line.split()

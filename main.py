@@ -12,6 +12,7 @@ from getpass import getpass
 
 
 ACCOUNT_DETAILS_FILEPATH = "users.txt"
+ENTRY_FILEPATH = "entries.txt"
 PASSWORD_LENGTH = 8
 
 
@@ -30,19 +31,25 @@ class Login(QDialog):
         if authenticate_user(email, password):
             make_message_box(f"Successfully logged in with email: {email}")
             self.close()
-            open_diary()
+            open_diary(email)
         else:
             make_message_box("Invalid username or password")  # let them try again
 
 
+def open_diary(email):
+    diary = Diary(email)
+    widget.addWidget(diary)
+    widget.setCurrentIndex(widget.currentIndex() + 1)
+
 
 class Diary(QDialog):
 
-    def __init__(self):
+    def __init__(self, email):
         super(Diary, self).__init__(None)
         uic.loadUi("diary.ui", self)
         self.submit_date_button.clicked.connect(self.open_new_entry)
         self.save_button.clicked.connect(self.save_entry)
+        self.email = email
 
     def open_new_entry(self):
         if self.date.toPlainText() == "":
@@ -55,7 +62,9 @@ class Diary(QDialog):
 
     def save_entry(self):
         make_message_box(f'Your entry for {self.date.toPlainText()} has been saved')
-        # Will save the data
+        with open(ENTRY_FILEPATH, "a") as f:
+            full_entry = self.date.toPlainText() + "\n" + self.entry_box.toPlainText()
+            f.write(f"{self.email} {full_entry}")
 
 
 class CreateAcc(QDialog):
@@ -74,8 +83,6 @@ class CreateAcc(QDialog):
             # print("Successfully created account with email: ", email, " and password: ", password)
             hashed_password = hash_password(password)
             save_user(email, hashed_password)
-            print("user", self.email.text())
-            print(hashed_password)
             make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
             self.close()
             login = Login()
@@ -89,12 +96,6 @@ def do_signup():
     create_acc = CreateAcc()
     widget.addWidget(create_acc)
     widget.setCurrentIndex(widget.currentIndex() + 1)
-
-
-def open_diary():
-        diary = Diary()
-        widget.addWidget(diary)
-        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 def hash_password(pwd):

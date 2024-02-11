@@ -2,10 +2,9 @@ import sys
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import *
 from PyQt5 import uic
-import secrets
-import string
 import hashlib
-from getpass import getpass
+import json
+import os
 
 
 # USING QT DESIGNER
@@ -13,7 +12,6 @@ from getpass import getpass
 
 ACCOUNT_DETAILS_FILEPATH = "users.txt"
 ENTRY_FILEPATH = "entries.txt"
-PASSWORD_LENGTH = 8
 
 
 class Login(QDialog):
@@ -49,6 +47,7 @@ class Diary(QDialog):
         uic.loadUi("diary.ui", self)
         self.submit_date_button.clicked.connect(self.open_new_entry)
         self.save_button.clicked.connect(self.save_entry)
+        self.view_button.clicked.connect(self.show_entries)
         self.email = email
 
     def open_new_entry(self):
@@ -62,9 +61,52 @@ class Diary(QDialog):
 
     def save_entry(self):
         make_message_box(f'Your entry for {self.date.toPlainText()} has been saved')
-        with open(ENTRY_FILEPATH, "a") as f:
-            full_entry = self.date.toPlainText() + "\n" + self.entry_box.toPlainText()
-            f.write(f"{self.email} {full_entry}")
+        # with open(ENTRY_FILEPATH, "a") as f:
+        full_entry = self.date.toPlainText() + "\n" + self.entry_box.toPlainText() + "\n"
+        #     f.write(f"{self.email} {full_entry}")
+        # open_diary(self.email)
+        if os.path.exists("data.json"):
+            #  opening JSON file
+            f = open('data.json')
+            loaded_entries = json.load(f)
+
+            if self.email in loaded_entries:
+                loaded_entries[self.email] += "\n" + full_entry
+            else:
+                loaded_entries[self.email] = full_entry
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(loaded_entries, f, ensure_ascii=False, indent=4)
+        else:
+            info = {
+                self.email: full_entry
+            }
+            with open('data.json', 'w', encoding='utf-8') as f:
+                json.dump(info, f, ensure_ascii=False, indent=4)
+        open_diary(self.email)
+
+    def show_entries(self):
+        if not os.path.exists("data.json"):
+            make_message_box("No entries exist.")
+        else:
+            entries = ShowEntries(self.email)
+            widget.addWidget(entries)
+            widget.setCurrentIndex(widget.currentIndex() + 1)
+
+
+class ShowEntries(QDialog):
+
+    def __init__(self, email):
+        super(ShowEntries, self).__init__(None)
+
+        self.email = email
+
+        uic.loadUi("past_entries.ui", self)
+        f = open('data.json')
+        # returns JSON object as a dictionary
+        data = json.load(f)
+        self.past_entries.append(data[self.email])
+        # Closing file
+        f.close()
 
 
 class CreateAcc(QDialog):
@@ -75,8 +117,6 @@ class CreateAcc(QDialog):
         self.signup_button.clicked.connect(self.create_acc_func)
         self.password.setEchoMode(QLineEdit.Password)
         self.password_confirm.setEchoMode(QLineEdit.Password)
-
-
 
     def create_acc_func(self):
         email = self.email.text()
@@ -135,6 +175,7 @@ def make_message_box(message):
     popup.setText(message)
     popup.exec_()
 
+
 def existing_user(email):
     with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
         for line in f:
@@ -153,4 +194,3 @@ widget.setFixedHeight(600)
 widget.show()
 
 app.exec_()
-

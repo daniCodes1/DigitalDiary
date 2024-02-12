@@ -5,13 +5,14 @@ from PyQt5 import uic
 import hashlib
 import json
 import os
-
+from ui_manager import make_message_box
+from user_manager import existing_user, authenticate_user, hash_password, save_user
 
 # USING QT DESIGNER
 
 
-ACCOUNT_DETAILS_FILEPATH = "users.txt"
-ENTRY_FILEPATH = "entries.json"
+ACCOUNT_DETAILS_FILEPATH = "data/users.txt"
+ENTRY_FILEPATH = "data/entries.json"
 
 
 class Login(QDialog):
@@ -21,7 +22,7 @@ class Login(QDialog):
         uic.loadUi("ui/log_in.ui", self)
         self.login_button.clicked.connect(self.do_login)
         self.password.setEchoMode(QLineEdit.Password)
-        self.create_acc_button.clicked.connect(do_signup)
+        self.create_acc_button.clicked.connect(WindowManager.goto_signup)
 
     def do_login(self):
         email = self.email.text()
@@ -31,15 +32,9 @@ class Login(QDialog):
         elif authenticate_user(email, password):
             make_message_box(f"Successfully logged in with email: {email}")
             self.close()
-            open_diary(email)
+            WindowManager.open_diary(email)
         else:
             make_message_box("Invalid username or password")  # let them try again
-
-
-def open_diary(email):
-    diary = Diary(email)
-    widget.addWidget(diary)
-    widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
 class Diary(QDialog):
@@ -84,11 +79,17 @@ class Diary(QDialog):
             }
             with open(ENTRY_FILEPATH, 'w', encoding='utf-8') as f:
                 json.dump(info, f, ensure_ascii=False, indent=4)
-        open_diary(self.email)
+        WindowManager.open_diary(self.email)
 
     def show_entries(self):
         if not os.path.exists(ENTRY_FILEPATH):
             make_message_box("No entries exist.")
+
+        f = open(ENTRY_FILEPATH)
+        # returns JSON object as a dictionary
+        data = json.load(f)
+        if self.email not in data:
+            make_message_box("You have no saved entries.")
         else:
             entries = ShowEntries(self.email)
             widget.addWidget(entries)
@@ -99,10 +100,10 @@ class ShowEntries(QDialog):
 
     def __init__(self, email):
         super(ShowEntries, self).__init__(None)
-
         self.email = email
-
         uic.loadUi("ui/past_entries.ui", self)
+        self.back_button.clicked.connect(lambda: WindowManager.open_diary(self.email))
+
         f = open(ENTRY_FILEPATH)
         # returns JSON object as a dictionary
         data = json.load(f)
@@ -133,69 +134,54 @@ class CreateAcc(QDialog):
                 save_user(email, hashed_password)
                 make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
                 self.close()
-                login = Login()
-                widget.addWidget(login)
-                widget.setCurrentIndex(widget.currentIndex() + 1)
+                WindowManager.goto_login()
             else:
                 make_message_box("Passwords do not match. Please try again.")
 
 
-def do_signup():
-    create_acc = CreateAcc()
-    widget.addWidget(create_acc)
-    widget.setCurrentIndex(widget.currentIndex() + 1)
+class WindowManager:
+    @staticmethod
+    def open_diary(email):
+        diary = Diary(email)
+        widget.addWidget(diary)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    @staticmethod
+    def show_entries(email):
+        entries = ShowEntries(email)
+        widget.addWidget(entries)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    @staticmethod
+    def goto_signup():
+        create_acc = CreateAcc()
+        widget.addWidget(create_acc)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
+
+    @staticmethod
+    def goto_login():
+        login = Login()
+        widget.addWidget(login)
+        widget.setCurrentIndex(widget.currentIndex() + 1)
 
 
-def hash_password(pwd):
-    # hash a password using SHA-256 algorithm
-    pwd_bytes = pwd.encode('utf-8')
-    hashed_pwd = hashlib.sha256(pwd_bytes).hexdigest()
-    return hashed_pwd
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+    main_window = Login()
+    widget = QtWidgets.QStackedWidget()  # makes a stack of diff dialogs, can incr. index & change screen
+    widget.addWidget(main_window)
+    widget.setFixedWidth(500)
+    widget.setFixedHeight(600)
+    widget.show()
 
+    app.exec_()
 
-def save_user(email, hashed_pwd):
-    # save to file
-    with open(ACCOUNT_DETAILS_FILEPATH, "a") as f:
-        f.write(f"{email} {hashed_pwd}\n")
-
-
-def authenticate_user(username, password):
-
-    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
-        for line in f:
-            components = line.split()
-            print("part", components)
-            if components[0] == username:
-                hashed_password = components[1]
-                if hashed_password == hash_password(password):
-                    return True
-                else:
-                    return False
-    return False
-
-
-def make_message_box(message):
-    popup = QMessageBox()
-    popup.setText(message)
-    popup.exec_()
-
-
-def existing_user(email):
-
-    with open(ACCOUNT_DETAILS_FILEPATH, "r") as f:
-        for line in f:
-            components = line.split()
-            if components[0] == email:
-                return True
-    return False
-
-
-app = QApplication(sys.argv)
-main_window = Login()
-widget = QtWidgets.QStackedWidget()  # makes a stack of diff dialogs, can incr. index & change screen
-widget.addWidget(main_window)
-widget.setFixedWidth(500)
-widget.setFixedHeight(600)
-widget.show()
-
-app.exec_()
+# app = QApplication(sys.argv)
+# main_window = Login()
+# widget = QtWidgets.QStackedWidget()  # makes a stack of diff dialogs, can incr. index & change screen
+# widget.addWidget(main_window)
+# widget.setFixedWidth(500)
+# widget.setFixedHeight(600)
+# widget.show()
+#
+# app.exec_()

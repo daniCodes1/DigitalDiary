@@ -1,7 +1,15 @@
 import hashlib
-
+from email_validator import validate_email, EmailNotValidError
 
 ACCOUNT_DETAILS_FILEPATH = "data/users.txt"
+
+
+def check_email(email):
+    try:
+        validate_email(email)
+        return True
+    except EmailNotValidError:
+        return False
 
 
 def save_user(email, hashed_pwd):

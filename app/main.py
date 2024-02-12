@@ -6,13 +6,14 @@ import hashlib
 import json
 import os
 from ui_manager import make_message_box
-from user_manager import existing_user, authenticate_user, hash_password, save_user
+from user_manager import existing_user, authenticate_user, hash_password, save_user, check_email
 
 # USING QT DESIGNER
 
 
 ACCOUNT_DETAILS_FILEPATH = "data/users.txt"
 ENTRY_FILEPATH = "data/entries.json"
+PASSWORD_LENGTH = 8
 
 
 class Login(QDialog):
@@ -124,19 +125,22 @@ class CreateAcc(QDialog):
 
     def create_acc_func(self):
         email = self.email.text()
+        password = self.password.text()
         if existing_user(email):
             make_message_box("Username taken.")
+        elif not check_email(email):
+            make_message_box("Please input a valid email.")
+        elif len(password) < PASSWORD_LENGTH:
+            make_message_box("Password length must be at least 8 characters")
+        elif self.password.text() == self.password_confirm.text():
+            # print("Successfully created account with email: ", email, " and password: ", password)
+            hashed_password = hash_password(password)
+            save_user(email, hashed_password)
+            make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
+            self.close()
+            WindowManager.goto_login()
         else:
-            if self.password.text() == self.password_confirm.text():
-                password = self.password.text()
-                # print("Successfully created account with email: ", email, " and password: ", password)
-                hashed_password = hash_password(password)
-                save_user(email, hashed_password)
-                make_message_box(f'Successfully created account for account {email}. Will redirect to log in.')
-                self.close()
-                WindowManager.goto_login()
-            else:
-                make_message_box("Passwords do not match. Please try again.")
+            make_message_box("Passwords do not match. Please try again.")
 
 
 class WindowManager:
